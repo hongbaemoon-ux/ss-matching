@@ -1,0 +1,44 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "🌟 상상우리" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=e5]:
+        - link "프로필 등록" [ref=e6] [cursor=pointer]:
+          - /url: /register
+        - link "추천 일자리" [ref=e7] [cursor=pointer]:
+          - /url: /recommendations
+        - link "담당자 대시보드" [ref=e8] [cursor=pointer]:
+          - /url: /admin
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - heading "프로필 등록" [level=1] [ref=e12]
+        - paragraph [ref=e13]: 정보를 입력하시면 맞는 일자리를 찾아드립니다.
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - generic [ref=e16]: 내 정보 입력
+          - generic [ref=e17]: "* 표시된 항목은 필수 입력 사항입니다."
+        - generic [ref=e19]:
+          - generic [ref=e20]:
+            - generic [ref=e21]: 이름 *
+            - textbox "이름 *" [disabled]:
+              - /placeholder: 홍길동
+          - generic [ref=e22]:
+            - generic [ref=e23]: 거주 지역 *
+            - combobox "거주 지역 *" [disabled] [ref=e24]:
+              - generic [ref=e25]: 지역을 선택하세요
+              - img: ▼
+            - textbox [disabled] [ref=e26]
+          - generic [ref=e27]:
+            - generic [ref=e28]: 희망 직종 *
+            - combobox "희망 직종 *" [disabled] [ref=e29]:
+              - generic [ref=e30]: 희망 직종을 선택하세요
+              - img: ▼
+            - textbox [disabled] [ref=e31]
+          - generic [ref=e32]:
+            - generic [ref=e33]: 경력 (년)
+            - spinbutton "경력 (년)" [disabled]
+            - paragraph [ref=e34]: 경력이 없으시면 0을 입력하세요.
+          - button "등록하기" [disabled]
+  - contentinfo [ref=e35]: © 2026 상상우리. 시니어 일자리 매칭 시스템.

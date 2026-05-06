@@ -1,0 +1,45 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "🌟 상상우리" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=e5]:
+        - link "프로필 등록" [ref=e6] [cursor=pointer]:
+          - /url: /register
+        - link "추천 일자리" [ref=e7] [cursor=pointer]:
+          - /url: /recommendations
+        - link "담당자 대시보드" [ref=e8] [cursor=pointer]:
+          - /url: /admin
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - heading "담당자 대시보드" [level=1] [ref=e12]
+        - paragraph [ref=e13]: 시니어 매칭 현황을 한눈에 확인하고 관리하세요.
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - generic [ref=e17]: 미매칭
+          - generic [ref=e19]: 0건
+        - generic [ref=e20]:
+          - generic [ref=e22]: 매칭 대기
+          - generic [ref=e24]: 0건
+        - generic [ref=e25]:
+          - generic [ref=e27]: 배정 완료
+          - generic [ref=e29]: 0건
+      - generic [ref=e30]:
+        - generic [ref=e32]:
+          - text: 미매칭
+          - generic [ref=e33]: 0건
+        - paragraph [ref=e35]: 해당 상태의 매칭이 없습니다.
+      - generic [ref=e36]:
+        - generic [ref=e38]:
+          - text: 매칭 대기
+          - generic [ref=e39]: 0건
+        - paragraph [ref=e41]: 해당 상태의 매칭이 없습니다.
+      - generic [ref=e42]:
+        - generic [ref=e44]:
+          - text: 배정 완료
+          - generic [ref=e45]: 0건
+        - paragraph [ref=e47]: 해당 상태의 매칭이 없습니다.
+  - contentinfo [ref=e48]: © 2026 상상우리. 시니어 일자리 매칭 시스템.
+  - button "Open Next.js Dev Tools" [ref=e54] [cursor=pointer]:
+    - img [ref=e55]

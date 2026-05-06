@@ -1,0 +1,28 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "🌟 상상우리" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=e5]:
+        - link "프로필 등록" [ref=e6] [cursor=pointer]:
+          - /url: /register
+        - link "추천 일자리" [ref=e7] [cursor=pointer]:
+          - /url: /recommendations
+        - link "담당자 대시보드" [ref=e8] [cursor=pointer]:
+          - /url: /admin
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - heading "추천 일자리 목록" [level=1] [ref=e12]
+        - paragraph [ref=e13]: 내 프로필과 가장 잘 맞는 일자리를 점수 순으로 보여드립니다.
+      - generic [ref=e14]:
+        - generic [ref=e16]:
+          - text: 매칭 결과
+          - generic [ref=e17]: 0건
+        - generic [ref=e19]:
+          - paragraph [ref=e20]: 📭
+          - paragraph [ref=e21]: 아직 추천 일자리가 없습니다.
+          - paragraph [ref=e22]: 프로필을 먼저 등록하시면 자동으로 매칭됩니다.
+  - contentinfo [ref=e23]: © 2026 상상우리. 시니어 일자리 매칭 시스템.
+  - button "Open Next.js Dev Tools" [ref=e29] [cursor=pointer]:
+    - img [ref=e30]

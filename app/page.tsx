@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const cards = [
   {
@@ -41,9 +42,15 @@ export default function HomePage() {
               <CardDescription className="text-lg">{description}</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button asChild size="lg" className="w-full text-xl py-6 bg-blue-600 hover:bg-blue-700">
-                <Link href={href}>{btn}</Link>
-              </Button>
+              <Link
+                href={href}
+                className={cn(
+                  buttonVariants({ size: "lg" }),
+                  "w-full text-center text-xl py-6 bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
+                )}
+              >
+                {btn}
+              </Link>
             </CardContent>
           </Card>
         ))}

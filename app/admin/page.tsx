@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { supabase, type Job } from "@/lib/supabase"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -37,20 +37,27 @@ export default function AdminPage() {
   const [addStatus, setAddStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
   const [addError, setAddError] = useState("")
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [fetchError, setFetchError] = useState("") // ③
 
-  useEffect(() => {
-    fetchJobs()
-  }, [])
-
-  async function fetchJobs() {
+  // ④ useCallback으로 감싸 useEffect 의존성 배열에 안전하게 포함
+  const fetchJobs = useCallback(async () => {
     setLoadingJobs(true)
+    setFetchError("")
     const { data, error } = await supabase
       .from("jobs")
       .select("*")
       .order("created_at", { ascending: false })
-    if (!error && data) setJobs(data as Job[])
+    if (error) {
+      setFetchError("일자리 목록을 불러오지 못했습니다: " + error.message) // ③
+    } else if (data) {
+      setJobs(data as Job[])
+    }
     setLoadingJobs(false)
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchJobs()
+  }, [fetchJobs])
 
   function validateForm(): Partial<JobForm> {
     const errs: Partial<JobForm> = {}
@@ -91,8 +98,13 @@ export default function AdminPage() {
   async function handleDeleteJob(id: string) {
     if (!confirm("이 일자리를 삭제하시겠습니까?")) return
     setDeletingId(id)
-    await supabase.from("jobs").delete().eq("id", id)
-    setJobs((prev) => prev.filter((j) => j.id !== id))
+    const { error } = await supabase.from("jobs").delete().eq("id", id)
+    if (error) {
+      // ② 삭제 실패 시 UI 상태 유지, 오류 알림
+      alert("삭제 실패: " + error.message)
+    } else {
+      setJobs((prev) => prev.filter((j) => j.id !== id))
+    }
     setDeletingId(null)
   }
 
@@ -221,6 +233,11 @@ export default function AdminPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {fetchError && (
+              <div className="mb-4 bg-red-100 border border-red-500 rounded-lg px-4 py-3 text-red-700 text-lg font-medium">
+                ❌ {fetchError}
+              </div>
+            )}
             {loadingJobs ? (
               <p className="text-xl text-gray-400 text-center py-10">불러오는 중…</p>
             ) : jobs.length === 0 ? (

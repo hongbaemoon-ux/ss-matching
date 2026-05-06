@@ -44,7 +44,10 @@ export default function RegisterPage() {
     e.preventDefault()
     const errs = validate()
     setErrors(errs)
-    if (Object.keys(errs).length > 0) return
+    if (Object.keys(errs).length > 0) {
+      setStatus("idle") // ① 이전 성공/오류 배너 초기화
+      return
+    }
 
     setStatus("loading")
     setDbError("")

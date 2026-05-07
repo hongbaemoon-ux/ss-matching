@@ -2,8 +2,9 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { supabase } from "@/lib/supabase"
+import { supabase, SUPABASE_CONFIGURED } from "@/lib/supabase"
 import type { Senior, Job } from "@/lib/supabase"
+import { EnvWarning } from "@/components/env-warning"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -58,6 +59,12 @@ export default function RegisterPage() {
       return
     }
 
+    if (!SUPABASE_CONFIGURED) {
+      setStatus("error")
+      setDbError("Supabase 환경변수가 설정되지 않았습니다. Vercel 대시보드에서 환경변수를 추가하고 재배포해 주세요.")
+      return
+    }
+
     setStatus("loading")
     setDbError("")
 
@@ -102,6 +109,8 @@ export default function RegisterPage() {
         <h1 className="text-4xl font-bold text-gray-900">프로필 등록</h1>
         <p className="text-xl text-gray-500">정보를 입력하시면 맞는 일자리를 찾아드립니다.</p>
       </div>
+
+      {!SUPABASE_CONFIGURED && <EnvWarning />}
 
       {/* 성공 */}
       {status === "success" && newSeniorId && (

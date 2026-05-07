@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
-import { supabase, type Job, type Senior } from "@/lib/supabase"
+import { supabase, SUPABASE_CONFIGURED, type Job, type Senior } from "@/lib/supabase"
+import { EnvWarning } from "@/components/env-warning"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -79,6 +80,9 @@ export default function AdminPage() {
 
   /* ─── 데이터 로드 ─── */
   const fetchJobs = useCallback(async () => {
+    if (!SUPABASE_CONFIGURED) {
+      setFetchError("ENV_NOT_SET"); setLoadingJobs(false); return
+    }
     setLoadingJobs(true); setFetchError("")
     const { data, error } = await supabase.from("jobs").select("*").order("created_at", { ascending: false })
     if (error) setFetchError("일자리 목록 로드 실패: " + error.message)
@@ -87,6 +91,9 @@ export default function AdminPage() {
   }, [])
 
   const fetchSeniorsWithMatches = useCallback(async () => {
+    if (!SUPABASE_CONFIGURED) {
+      setSeniorsError("ENV_NOT_SET"); setLoadingSeniors(false); return
+    }
     setLoadingSeniors(true); setSeniorsError("")
     const { data, error } = await supabase
       .from("seniors")
@@ -175,6 +182,8 @@ export default function AdminPage() {
         <h1 className="text-4xl font-bold text-gray-900">담당자 대시보드</h1>
         <p className="text-xl text-gray-500">일자리 등록 및 매칭 현황을 관리하세요.</p>
       </div>
+
+      {!SUPABASE_CONFIGURED && <EnvWarning />}
 
       {/* ══ 일자리 관리 섹션 ══ */}
       <section className="space-y-6">

@@ -3,7 +3,8 @@
 import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { supabase } from "@/lib/supabase"
+import { supabase, SUPABASE_CONFIGURED } from "@/lib/supabase"
+import { EnvWarning } from "@/components/env-warning"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { buttonVariants } from "@/components/ui/button"
@@ -37,6 +38,7 @@ function RecommendationsContent() {
   const [fetchError,  setFetchError] = useState("")
 
   useEffect(() => {
+    if (!SUPABASE_CONFIGURED) { setFetchError("ENV_NOT_SET"); setLoading(false); return }
     if (!seniorId) { setLoading(false); return }
 
     async function load() {
@@ -83,6 +85,8 @@ function RecommendationsContent() {
       </div>
     )
   }
+
+  if (fetchError === "ENV_NOT_SET") return <EnvWarning />
 
   if (fetchError) {
     return (

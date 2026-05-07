@@ -1,11 +1,23 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Vercel 빌드 환경에 환경변수가 없을 때 createClient 가 throw 하지 않도록 폴백 사용.
-// 실제 API 호출은 브라우저(클라이언트 컴포넌트)에서만 일어나므로 문제 없음.
-const supabaseUrl     = process.env.NEXT_PUBLIC_SUPABASE_URL     || 'https://placeholder.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key'
+// 환경변수 설정 여부 — 빌드 타임에 인라인되어 런타임에 안전하게 사용 가능
+export const SUPABASE_CONFIGURED = !!(
+  process.env.NEXT_PUBLIC_SUPABASE_URL &&
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// 플레이스홀더: supabase-js가 JWT 파싱 시도 시 null/undefined 반환을 막기 위해
+// 유효한 JWT 3-파트 구조 사용 (빌드-타임 throw 방지용, 실제 API 호출 안 됨)
+const PLACEHOLDER_URL = 'https://placeholder.supabase.co'
+const PLACEHOLDER_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' +
+  '.eyJpc3MiOiJwbGFjZWhvbGRlciIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjI3MDAwMDAwMDB9' +
+  '.placeholder-signature'
+
+export const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL     || PLACEHOLDER_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || PLACEHOLDER_KEY
+)
 
 export type Senior = {
   id: string

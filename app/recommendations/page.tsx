@@ -23,13 +23,13 @@ type MatchWithJob = {
 }
 
 function ScoreBadge({ score }: { score: number }) {
-  if (score === 6)
+  if (score === 7)
     return (
       <Badge className="bg-yellow-400 text-yellow-900 font-bold text-lg px-4 py-1.5">
         ⭐ {score}점 · 매우 적합
       </Badge>
     )
-  if (score >= 4)
+  if (score >= 5)
     return (
       <Badge className="bg-green-100 text-green-800 font-bold text-lg px-4 py-1.5">
         ✓ {score}점 · 적합

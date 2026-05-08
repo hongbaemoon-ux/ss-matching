@@ -5,6 +5,7 @@ import Link from "next/link"
 import { AlertTriangle, Clock, CheckCircle } from "lucide-react"
 import { supabase, SUPABASE_CONFIGURED, type Job, type Senior } from "@/lib/supabase"
 import { calcScore } from "@/lib/matching"
+import { SEOUL_GU, GYEONGGI_SIGUN } from "@/lib/geo"
 import { EnvWarning } from "@/components/env-warning"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -20,11 +21,11 @@ import {
 } from "@/components/ui/table"
 
 /* ─── 상수 ─── */
-const REGIONS   = ["서울", "경기", "인천", "기타"]
+const PROVINCES = ["서울", "경기", "인천", "기타"]
 const JOB_TYPES = ["경비", "청소", "조리", "돌봄", "기타"]
 
-type JobForm = { title: string; region: string; job_type: string; required_career: number }
-const EMPTY_FORM: JobForm = { title: "", region: "", job_type: "", required_career: 0 }
+type JobForm = { title: string; province: string; district: string; job_type: string; required_career: number }
+const EMPTY_FORM: JobForm = { title: "", province: "", district: "", job_type: "", required_career: 0 }
 
 /* ─── 시니어 + 매치 타입 ─── */
 type MatchRow = { id: string; score: number; status: string }
@@ -104,7 +105,7 @@ export default function AdminPage() {
   function validateForm(): Partial<JobForm> {
     const errs: Partial<JobForm> = {}
     if (!form.title.trim()) errs.title    = "공고명을 입력해 주세요."
-    if (!form.region)       errs.region   = "지역을 선택해 주세요."
+    if (!form.province)     errs.province = "지역을 선택해 주세요."
     if (!form.job_type)     errs.job_type = "직종을 선택해 주세요."
     return errs
   }
@@ -117,9 +118,10 @@ export default function AdminPage() {
 
     setAddStatus("loading"); setAddError("")
 
+    const jobRegion = form.district || form.province
     const { data: newJob, error } = await supabase
       .from("jobs")
-      .insert({ title: form.title.trim(), region: form.region, job_type: form.job_type, required_career: form.required_career })
+      .insert({ title: form.title.trim(), region: jobRegion, job_type: form.job_type, required_career: form.required_career })
       .select("*")
       .single()
 
@@ -213,11 +215,26 @@ export default function AdminPage() {
                 {/* 지역 */}
                 <div className="space-y-2">
                   <Label className="text-lg font-semibold">지역 *</Label>
-                  {formErrors.region && <div className="bg-red-100 border border-red-500 rounded-lg px-3 py-2 text-red-700 text-base font-medium">⚠ {formErrors.region}</div>}
-                  <Select value={form.region} onValueChange={(v) => setForm({ ...form, region: v ?? "" })}>
-                    <SelectTrigger className="text-lg border-2 h-12 w-full"><SelectValue placeholder="지역 선택" /></SelectTrigger>
-                    <SelectContent>{REGIONS.map((r) => <SelectItem key={r} value={r} className="text-lg py-2">{r}</SelectItem>)}</SelectContent>
+                  {formErrors.province && <div className="bg-red-100 border border-red-500 rounded-lg px-3 py-2 text-red-700 text-base font-medium">⚠ {formErrors.province}</div>}
+                  <Select value={form.province} onValueChange={(v) => setForm({ ...form, province: v ?? "", district: "" })}>
+                    <SelectTrigger className="text-lg border-2 h-12 w-full"><SelectValue placeholder="시/도 선택" /></SelectTrigger>
+                    <SelectContent>{PROVINCES.map((r) => <SelectItem key={r} value={r} className="text-lg py-2">{r}</SelectItem>)}</SelectContent>
                   </Select>
+                  {form.province === "서울" && (
+                    <Select value={form.district} onValueChange={(v) => setForm({ ...form, district: v ?? "" })}>
+                      <SelectTrigger className="text-lg border-2 h-12 w-full"><SelectValue placeholder="구 선택 (선택)" /></SelectTrigger>
+                      <SelectContent>{SEOUL_GU.map((g) => <SelectItem key={g} value={g} className="text-lg py-2">{g}</SelectItem>)}</SelectContent>
+                    </Select>
+                  )}
+                  {form.province === "경기" && (
+                    <Select value={form.district} onValueChange={(v) => setForm({ ...form, district: v ?? "" })}>
+                      <SelectTrigger className="text-lg border-2 h-12 w-full"><SelectValue placeholder="시/군 선택 (선택)" /></SelectTrigger>
+                      <SelectContent>{GYEONGGI_SIGUN.map((s) => <SelectItem key={s} value={s} className="text-lg py-2">{s}</SelectItem>)}</SelectContent>
+                    </Select>
+                  )}
+                  {form.district && (
+                    <p className="text-sm text-blue-600 font-medium">📍 선택된 지역: {form.district}</p>
+                  )}
                 </div>
                 {/* 직종 */}
                 <div className="space-y-2">

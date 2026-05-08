@@ -1,10 +1,5 @@
 import type { Senior, Job } from "@/lib/supabase"
-
-const REGION_MAP: Record<string, string> = {
-  "서울특별시": "서울",
-  "경기도":     "경기",
-  "인천광역시": "인천",
-}
+import { getRegionScore } from "@/lib/geo"
 
 const JOB_MAP: Record<string, string> = {
   "경비직": "경비",
@@ -13,21 +8,18 @@ const JOB_MAP: Record<string, string> = {
   "돌봄직": "돌봄",
 }
 
-export function normalizeRegion(v: string): string {
-  return REGION_MAP[v] ?? v
-}
-
 export function normalizeJob(v: string): string {
   return JOB_MAP[v] ?? v
 }
 
+/** 직종+3 / 경력+2 / 지역(30km 이내)+2 = 최대 7점 */
 export function calcScore(
   s: Pick<Senior, "region" | "desired_job" | "career_years">,
   j: Pick<Job,    "region" | "job_type"    | "required_career">
 ): number {
   let score = 0
-  if (normalizeJob(s.desired_job)  === normalizeJob(j.job_type))    score += 3
-  if (s.career_years >= j.required_career)                          score += 2
-  if (normalizeRegion(s.region)    === normalizeRegion(j.region))   score += 1
+  if (normalizeJob(s.desired_job) === normalizeJob(j.job_type)) score += 3
+  if (s.career_years >= j.required_career)                      score += 2
+  score += getRegionScore(s.region, j.region)                   // 0 or 2
   return score
 }

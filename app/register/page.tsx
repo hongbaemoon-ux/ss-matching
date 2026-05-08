@@ -15,8 +15,9 @@ import { cn } from "@/lib/utils"
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select"
+import { SEOUL_GU, GYEONGGI_SIGUN } from "@/lib/geo"
 
-const REGIONS   = ["서울", "경기", "인천", "기타"]
+const PROVINCES = ["서울", "경기", "인천", "기타"]
 const JOB_TYPES = ["경비", "청소", "조리", "돌봄", "기타"]
 
 type FormErrors = { name?: string; region?: string; desired_job?: string }
@@ -24,7 +25,8 @@ type FormErrors = { name?: string; region?: string; desired_job?: string }
 
 export default function RegisterPage() {
   const [name,        setName]        = useState("")
-  const [region,      setRegion]      = useState("")
+  const [province,    setProvince]    = useState("")
+  const [district,    setDistrict]    = useState("")
   const [desiredJob,  setDesiredJob]  = useState("")
   const [careerYears, setCareerYears] = useState(0)
   const [errors,      setErrors]      = useState<FormErrors>({})
@@ -32,10 +34,13 @@ export default function RegisterPage() {
   const [dbError,     setDbError]     = useState("")
   const [newSeniorId, setNewSeniorId] = useState<string | null>(null)
 
+  // 실제 저장값: 구/시·군 선택 시 세부 지역, 아니면 시/도
+  const region = district || province
+
   function validate(): FormErrors {
     const errs: FormErrors = {}
     if (!name.trim()) errs.name       = "이름을 입력해 주세요."
-    if (!region)      errs.region     = "지역을 선택해 주세요."
+    if (!province)    errs.region     = "지역을 선택해 주세요."
     if (!desiredJob)  errs.desired_job = "희망 직종을 선택해 주세요."
     return errs
   }
@@ -90,7 +95,7 @@ export default function RegisterPage() {
 
     setNewSeniorId(newSenior.id)
     setStatus("success")
-    setName(""); setRegion(""); setDesiredJob(""); setCareerYears(0); setErrors({})
+    setName(""); setProvince(""); setDistrict(""); setDesiredJob(""); setCareerYears(0); setErrors({})
   }
 
   return (
@@ -155,14 +160,40 @@ export default function RegisterPage() {
                   ⚠ {errors.region}
                 </div>
               )}
-              <Select value={region} onValueChange={(v) => setRegion(v ?? "")}>
+              <Select value={province} onValueChange={(v) => { setProvince(v ?? ""); setDistrict("") }}>
                 <SelectTrigger className="text-xl border-2 h-14 w-full">
-                  <SelectValue placeholder="지역을 선택하세요" />
+                  <SelectValue placeholder="시/도를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  {REGIONS.map((r) => <SelectItem key={r} value={r} className="text-xl py-3">{r}</SelectItem>)}
+                  {PROVINCES.map((r) => <SelectItem key={r} value={r} className="text-xl py-3">{r}</SelectItem>)}
                 </SelectContent>
               </Select>
+
+              {province === "서울" && (
+                <Select value={district} onValueChange={(v) => setDistrict(v ?? "")}>
+                  <SelectTrigger className="text-xl border-2 h-14 w-full">
+                    <SelectValue placeholder="구를 선택하세요 (선택)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SEOUL_GU.map((g) => <SelectItem key={g} value={g} className="text-xl py-3">{g}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              )}
+
+              {province === "경기" && (
+                <Select value={district} onValueChange={(v) => setDistrict(v ?? "")}>
+                  <SelectTrigger className="text-xl border-2 h-14 w-full">
+                    <SelectValue placeholder="시/군을 선택하세요 (선택)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {GYEONGGI_SIGUN.map((s) => <SelectItem key={s} value={s} className="text-xl py-3">{s}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              )}
+
+              {district && (
+                <p className="text-base text-blue-600 font-medium">📍 선택된 지역: {district}</p>
+              )}
             </div>
 
             {/* 희망 직종 */}

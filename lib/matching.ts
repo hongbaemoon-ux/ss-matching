@@ -26,8 +26,8 @@ export function calcScore(
   j: Pick<Job,    "region" | "job_type"    | "required_career">
 ): number {
   let score = 0
-  if (normalizeRegion(s.region)    === normalizeRegion(j.region))   score += 3
-  if (normalizeJob(s.desired_job)  === normalizeJob(j.job_type))    score += 2
-  if (s.career_years >= j.required_career)                          score += 1
+  if (normalizeJob(s.desired_job)  === normalizeJob(j.job_type))    score += 3
+  if (s.career_years >= j.required_career)                          score += 2
+  if (normalizeRegion(s.region)    === normalizeRegion(j.region))   score += 1
   return score
 }

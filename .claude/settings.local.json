@@ -25,7 +25,26 @@
       "mcp__playwright__browser_take_screenshot",
       "Bash(git init *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(git config *)",
+      "Bash(git remote *)",
+      "Bash(git branch *)",
+      "Bash(git push *)",
+      "mcp__playwright__browser_close",
+      "Bash(node -e ' *)",
+      "mcp__supabase__list_tables",
+      "Bash(npx playwright *)",
+      "Bash(New-Item -ItemType Directory -Path \"C:\\\\Users\\\\hb\\\\Desktop\\\\ss-matching\\\\tests\\\\helpers\" -Force)",
+      "Bash(Out-Null)",
+      "Bash(Write-Host \"done\")",
+      "PowerShell(New-Item *)",
+      "mcp__supabase__execute_sql",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_network_requests",
+      "mcp__playwright__browser_wait_for",
+      "Bash(npx tsc *)"
     ]
   }
 }

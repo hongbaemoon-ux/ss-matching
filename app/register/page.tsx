@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { supabase, SUPABASE_CONFIGURED } from "@/lib/supabase"
 import type { Senior, Job } from "@/lib/supabase"
+import { calcScore } from "@/lib/matching"
 import { EnvWarning } from "@/components/env-warning"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -20,17 +21,6 @@ const JOB_TYPES = ["경비", "청소", "조리", "돌봄", "기타"]
 
 type FormErrors = { name?: string; region?: string; desired_job?: string }
 
-/** 앱 레이어 폴백용 점수 계산 */
-function calcScore(
-  s: Pick<Senior, "region" | "desired_job" | "career_years">,
-  j: Pick<Job,    "region" | "job_type"   | "required_career">
-): number {
-  let score = 0
-  if (s.region      === j.region)           score += 3
-  if (s.desired_job === j.job_type)         score += 2
-  if (s.career_years >= j.required_career)  score += 1
-  return score
-}
 
 export default function RegisterPage() {
   const [name,        setName]        = useState("")
@@ -106,8 +96,8 @@ export default function RegisterPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-8">
       <div className="space-y-2">
-        <h1 className="text-4xl font-bold text-gray-900">프로필 등록</h1>
-        <p className="text-xl text-gray-500">정보를 입력하시면 맞는 일자리를 찾아드립니다.</p>
+        <h1 className="text-4xl font-bold text-gray-900">시니어 일자리 신청하기</h1>
+        <p className="text-xl text-gray-500">아래 정보를 입력하시면 맞는 일자리를 찾아드립니다.</p>
       </div>
 
       {!SUPABASE_CONFIGURED && <EnvWarning />}
@@ -115,7 +105,7 @@ export default function RegisterPage() {
       {/* 성공 */}
       {status === "success" && newSeniorId && (
         <div className="bg-green-100 border-2 border-green-600 rounded-xl p-6 space-y-4">
-          <p className="text-xl font-semibold text-green-800">✅ 등록이 완료되었습니다!</p>
+          <p className="text-xl font-semibold text-green-800">✅ 등록이 완료되었습니다. 담당자가 곧 연락드립니다.</p>
           <Link
             href={`/recommendations?senior_id=${newSeniorId}`}
             className={cn(
@@ -146,6 +136,7 @@ export default function RegisterPage() {
             {/* 이름 */}
             <div className="space-y-2">
               <Label htmlFor="name" className="text-xl font-semibold">이름 *</Label>
+              <p className="text-base text-gray-500">성함을 입력해 주세요.</p>
               {errors.name && (
                 <div className="bg-red-100 border border-red-500 rounded-lg px-4 py-3 text-red-700 text-lg font-medium">
                   ⚠ {errors.name}
@@ -158,6 +149,7 @@ export default function RegisterPage() {
             {/* 지역 */}
             <div className="space-y-2">
               <Label className="text-xl font-semibold">거주 지역 *</Label>
+              <p className="text-base text-gray-500">어디에서 일하고 싶으세요?</p>
               {errors.region && (
                 <div className="bg-red-100 border border-red-500 rounded-lg px-4 py-3 text-red-700 text-lg font-medium">
                   ⚠ {errors.region}
@@ -176,6 +168,7 @@ export default function RegisterPage() {
             {/* 희망 직종 */}
             <div className="space-y-2">
               <Label className="text-xl font-semibold">희망 직종 *</Label>
+              <p className="text-base text-gray-500">어떤 일을 하시겠어요?</p>
               {errors.desired_job && (
                 <div className="bg-red-100 border border-red-500 rounded-lg px-4 py-3 text-red-700 text-lg font-medium">
                   ⚠ {errors.desired_job}

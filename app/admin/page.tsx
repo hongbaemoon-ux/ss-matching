@@ -2,7 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
+import { AlertTriangle, Clock, CheckCircle } from "lucide-react"
 import { supabase, SUPABASE_CONFIGURED, type Job, type Senior } from "@/lib/supabase"
+import { calcScore } from "@/lib/matching"
 import { EnvWarning } from "@/components/env-warning"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -40,17 +42,6 @@ function getBestScore(matches: MatchRow[]): number {
   return matches.reduce((max, m) => Math.max(max, m.score), 0)
 }
 
-/* ─── 앱 레이어 폴백용 점수 계산 ─── */
-function calcScore(
-  s: Pick<Senior, "region" | "desired_job" | "career_years">,
-  j: Pick<Job,    "region" | "job_type"    | "required_career">
-): number {
-  let score = 0
-  if (s.region      === j.region)           score += 3
-  if (s.desired_job === j.job_type)         score += 2
-  if (s.career_years >= j.required_career)  score += 1
-  return score
-}
 
 /* ─── 배지 컴포넌트 ─── */
 function StatusBadge({ status }: { status: "미매칭" | "매칭 대기" | "배정 완료" }) {
@@ -302,12 +293,17 @@ export default function AdminPage() {
         {/* 집계 카드 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {([
-            { label: "미매칭",   count: stats.unmatched, cls: "bg-gray-100 text-gray-600" },
-            { label: "매칭 대기", count: stats.pending,   cls: "bg-yellow-100 text-yellow-800" },
-            { label: "배정 완료", count: stats.assigned,  cls: "bg-green-100 text-green-800"  },
-          ] as const).map(({ label, count, cls }) => (
+            { label: "미매칭",    count: stats.unmatched, cls: "bg-gray-100 text-gray-600",     Icon: AlertTriangle },
+            { label: "매칭 대기", count: stats.pending,   cls: "bg-yellow-100 text-yellow-800", Icon: Clock },
+            { label: "배정 완료", count: stats.assigned,  cls: "bg-green-100 text-green-800",   Icon: CheckCircle },
+          ] as const).map(({ label, count, cls, Icon }) => (
             <Card key={label} className="border-2 text-center">
-              <CardHeader><CardTitle className="text-2xl">{label}</CardTitle></CardHeader>
+              <CardHeader>
+                <CardTitle className="text-2xl flex items-center justify-center gap-2">
+                  <Icon className="w-6 h-6" />
+                  {label}
+                </CardTitle>
+              </CardHeader>
               <CardContent>
                 <Badge className={`${cls} text-3xl font-bold px-6 py-3`}>
                   {loadingSeniors ? "…" : `${count}명`}
